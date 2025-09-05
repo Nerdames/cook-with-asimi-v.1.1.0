@@ -1,0 +1,104 @@
+.figContent {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* Maintains cube shape */
+  max-width: 360px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  flex: 1 1 300px;
+  box-sizing: border-box;
+}
+
+.figImg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.figImg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  transition: transform 0.5s ease;
+}
+
+.figOverlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  text-align: center;
+  padding: 12px;
+  transition: background 0.4s ease, font-size 0.3s ease;
+}
+
+.figOverlay p {
+  color: var(--text-color);
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  margin: 0;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.figContent:hover .figOverlay {
+  background: rgba(0,0,0,0.5);
+}
+
+.figContent:hover img {
+  transform: scale(1.05);
+}
+
+/* Tag Styling */
+.figTag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: var(--highlight-color);
+  color: var(--text-color);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  z-index: 10;
+}
+
+/* --- Responsive Refinements --- */
+
+@media (max-width: 768px) {
+  .figContent {
+    max-width: 100%;
+  }
+
+  .figOverlay {
+    padding: 10px;
+  }
+
+  .figTag {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .figOverlay {
+    padding: 8px;
+  }
+
+  .figOverlay p {
+    font-size: 0.9rem;
+  }
+}

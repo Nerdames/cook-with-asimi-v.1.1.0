@@ -1,0 +1,125 @@
+/* ============ SkeletonCard Styles ============ */
+
+.skeletonCard {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  width: 100%;
+  min-height: 250px;
+  margin: 10px 20px;
+  background-color: var(--bg-white-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.imageSkeleton {
+  flex: 1;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: #e0e0e0;
+  object-fit: cover;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.textSkeleton {
+  flex: 2;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 12px;
+  padding: 20px 32px;
+  min-width: 0;
+}
+
+.headerSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.categoryLine,
+.titleLine,
+.metaLine,
+.descriptionLine,
+.descriptionLineShort,
+.buttonSkeleton,
+.icon {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.categoryLine { width: 30%; height: 1rem; }
+.titleLine { width: 80%; height: 1.2rem; }
+.metaLine { width: 50%; height: 0.9rem; }
+
+.descriptionSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.descriptionLine { width: 100%; height: 0.9rem; }
+.descriptionLineShort { width: 60%; height: 0.9rem; }
+
+.footerSkeleton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid var(--highlight-color);
+}
+
+.buttonSkeleton {
+  width: 120px;
+  height: 36px;
+  border-radius: var(--button-border-radius);
+}
+
+.socialIconsSkeleton {
+  display: flex;
+  gap: 8px;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .skeletonCard {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .imageSkeleton {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .textSkeleton {
+    width: 100%;
+    padding: 16px 20px;
+    grid-template-rows: auto auto auto auto;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    background-color: #e0e0e0;
+  }
+  50% {
+    background-color: #f0f0f0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0.3;
+  }
+  to {
+    opacity: 1;
+  }
+}

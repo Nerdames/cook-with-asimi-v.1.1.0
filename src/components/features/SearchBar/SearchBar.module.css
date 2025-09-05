@@ -1,0 +1,133 @@
+.searchContainer {
+  position: relative;
+  margin-left: 1rem;
+  flex-grow: 1;
+  max-width: 300px;
+  transition: all 0.3s ease-in-out;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.5rem 2.5rem 0.5rem 1rem; /* room for Go button */
+  font-size: 0.9rem;
+  border: 1px solid var(--tag-border);
+  border-radius: var(--button-border-radius);
+  background-color: var(--bg-white-color);
+  color: var(--text-dark);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(218, 165, 32, 0.15);
+}
+
+.goButton {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) scale(0.8);
+  opacity: 0;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: var(--button-border-radius);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.4rem 0.6rem;
+  z-index: 10;
+  transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.3s ease;
+  pointer-events: none;
+  height: 100%;
+}
+
+.goVisible {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+  pointer-events: auto;
+}
+
+.goButton:hover {
+  background-color: #b78f1c;
+}
+
+.goButton:active {
+  transform: translateY(-50%) scale(0.95);
+  background-color: #a77f10;
+}
+
+.goButton:focus {
+  outline: 2px solid rgba(218, 165, 32, 0.5);
+  outline-offset: 2px;
+}
+
+.resultsList {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0;
+  position: absolute;
+  top: calc(100% + 4px);
+  width: 100%;
+  background: var(--bg-white-color);
+  border: 1px solid var(--tag-border);
+  border-radius: var(--button-border-radius);
+  z-index: 2000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fadeIn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.resultLink {
+  display: block;
+  padding: 0.6rem 1rem;
+  text-decoration: none;
+  color: var(--tag-text);
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  cursor: pointer;
+}
+
+.resultLink:hover,
+.activeItem {
+  background-color: var(--tag-bg-hover);
+  color: var(--tag-text-hover);
+}
+
+.searchStatus {
+  font-size: 0.75rem;
+  padding: 0.5rem 1rem;
+  color: var(--highlight-color);
+}
+
+
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .searchContainer {
+    width: 100%;
+    margin: 1rem 0;
+    max-width: 90%;
+  }
+
+  .searchInput {
+    font-size: 1rem;
+  }
+
+  .goButton {
+    font-size: 1.1rem;
+    padding: 0.4rem 0.7rem;
+  }
+
+  .resultLink {
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+  }
+}

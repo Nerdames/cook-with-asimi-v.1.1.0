@@ -1,0 +1,108 @@
+.footer1 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 50px 20px;
+  background-color: var(--bg-black-color);
+  align-items: center;       /* vertically center each grid item */
+  justify-items: center;     /* horizontally center each grid item */
+}
+
+
+.footer1Item {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  row-gap: 10px;
+}
+
+.footer1Item ul {
+  list-style: none;
+  padding: 0;
+}
+
+.itemTopic {
+  width: 100%;
+  height: 40px;
+  color: var(--text-color);
+  line-height: 40px;
+  font-size: 20px;
+  font-weight: bold;
+  user-select: none;
+}
+
+.footer1Item li {
+  display: flex;
+  align-items: center;
+}
+
+.footer1Item li a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 0;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.footer1Item li a i {
+  font-size: 24px;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+}
+
+.footer1Item li a span {
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.footer1Item li a:hover,
+.footer1Item li a:hover i,
+.footer1Item li a:hover span {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* === Footer2 Styling === */
+.footer2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  font-size: 0.9rem;
+  padding: 10px 0;
+  color: var(--text-light);
+  background-color: white;
+  border-top: 1px solid var(--border-color);
+  flex-wrap: wrap;
+}
+
+.footer2 p {
+  margin: 5px 0;
+  user-select: none;
+}
+
+/* Mobile view: stack vertically */
+@media (max-width: 600px) {
+  .footer2 {
+    flex-direction: column;
+    row-gap: 10px;
+    height: auto;
+  }
+
+  .footer1Item {
+    border-bottom: 1px solid var(--bg-black-color);
+    width: 100%;
+  }
+
+    .footer1Item:last-child {
+        border-bottom: none;
+    }
+}

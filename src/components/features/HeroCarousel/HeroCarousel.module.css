@@ -1,0 +1,318 @@
+@import 'boxicons/css/boxicons.min.css';
+
+/* Main Layout */
+.heroSection {
+  width: 100%;
+  position: relative;
+  margin: 40px 0;
+  overflow: hidden;
+}
+
+.heroTitle {
+  padding: 8px 20px;
+  position: absolute;
+  z-index: 10;
+  background-color: #f5f5f5b0;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-dark);
+  left: 20px;
+  user-select: none;
+}
+
+.heroCarouselGrid {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  gap: 6px;
+  padding: 0 20px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.carouselWrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Featured Post */
+.featuredPost {
+  transition: all 0.5s ease;
+  animation: widthFade 1.8s ease forwards;
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 16 / 9;
+}
+
+.featuredPostTitle {
+  position: absolute;
+  bottom: 50px;
+  left: 20px;
+  z-index: 10;
+  width: 400px;
+}
+
+.featuredPostTitle h2 {
+  margin: 0;
+  line-height: 1.3;
+  font-size: 1.2rem;
+  color: var(--text-color);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  text-align: left;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.carouselImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  transition: transform 0.5s ease;
+  aspect-ratio: 16 / 9;
+}
+
+/* Hot Posts */
+.hotPosts {
+  display: grid;
+  grid-template-rows: 60% 40%;
+  gap: 6px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.hotPostTop {
+  height: 100%;
+  width: 100%;
+  animation: fadeInTop 1.4s ease forwards;
+  animation-delay: 0.3s;
+  overflow: hidden;
+}
+
+.hotPostBottom {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  gap: 6px;
+  overflow: hidden;
+}
+
+
+/* Apply fade to each bottom post with delay */
+.hotPostBottom .post:nth-child(1) {
+  animation: fadeInBottom 1.5s ease forwards;
+  animation-delay: 0.8s;
+}
+.hotPostBottom .post:nth-child(2) {
+  animation: fadeInBottom 1.5s ease forwards;
+  animation-delay: 1s;
+}
+
+/* Shared Post Styling */
+.post {
+  position: relative;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.post img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  aspect-ratio: 16 / 9;
+}
+
+.hotPost {
+  aspect-ratio: 16 / 9;
+}
+
+.post:hover img {
+  transform: scale(1.05);
+}
+
+.postOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  padding: 12px;
+  text-align: center;
+}
+
+.post:hover .postOverlay {
+  opacity: 1;
+}
+
+.hotPostTitle {
+  font-size: 1rem;
+  color: var(--text-color);
+  text-align: center;
+  user-select: none;
+  margin: 0;
+  padding: 0 10px;
+  line-height: 1.3;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Dots Navigation */
+.dots {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 20;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 6px;
+  background: #ccc;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.activeDot {
+  background: var(--primary-color);
+  width: 12px;
+}
+
+/* Desktop Nav Buttons */
+.navButtons {
+  display: none;
+}
+
+@media (min-width: 1025px) {
+  .navButtons {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+
+  .navButtons button {
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    color: white;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+  }
+
+  .navButtons button:hover {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .navButtons i {
+    font-size: 24px;
+  }
+}
+
+/* Animations */
+@keyframes widthFade {
+  from {
+    opacity: 0;
+    width: 90%;
+  }
+  to {
+    opacity: 1;
+    width: 100%;
+  }
+}
+
+@keyframes fadeInTop {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInBottom {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .heroSection {
+    margin: 20px 0;
+  }
+
+  .heroTitle {
+    font-size: 1.2rem;
+  }
+
+  .hotPosts {
+    grid-template-rows: auto;
+  }
+
+  .postOverlay {
+    font-size: 0.9rem;
+  }
+
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .heroCarouselGrid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .hotPosts {
+    display: none;
+  }
+
+  .heroTitle {
+    font-size: 1rem;
+    padding: 0 10px;
+  }
+
+  .postOverlay {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .featuredPostTitle h2 {
+    font-size: 1.2rem;
+    width: 100%;
+  }
+}

@@ -1,0 +1,51 @@
+.tagFilterContainer {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: 0.5rem;
+  margin: 20px auto;
+  padding: 0 1rem;
+  max-width: 1200px;
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.tagFilterContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.tagFilterContainer button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: var(--button-border-radius);
+  border: 1px solid var(--highlight-color);
+  background: var(--light-bg);
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.2s;
+}
+
+.tagFilterContainer button:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: var(--bg-white-color);
+  transform: scale(1.05);
+}
+
+.tagFilterContainer button.active {
+  background-color: var(--bg-black-color);
+  color: var(--bg-white-color);
+  border-color: var(--primary-color);
+}
+
+@media (max-width: 480px) {
+  .tagFilterContainer button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
