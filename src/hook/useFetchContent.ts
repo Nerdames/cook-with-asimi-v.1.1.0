@@ -58,8 +58,18 @@ export function useFetchContent<T extends Blog | About = Blog>({
           sort,
         })
 
+        let mappedData = result.data as T[]
+
+        // ✅ Ensure Blog.slug is always defined
+        if (type === 'blog') {
+          mappedData = mappedData.map((item: T) => {
+            const blog = item as Blog
+            return { ...blog, slug: blog.slug || blog._id } as T
+          })
+        }
+
         if (!cancelled) {
-          setData(result.data as T[])
+          setData(mappedData)
           setTotal(result.total)
         }
       } catch (err) {
