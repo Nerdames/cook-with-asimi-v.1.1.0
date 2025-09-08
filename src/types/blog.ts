@@ -17,5 +17,9 @@ export interface Blog {
   }
   thumbnail?: string
   video?: string
-  date: string // ✅ matches schema "date"
+  date: string
+  author?: {
+    name: string
+  }
+  related?: Blog[] // ✅ blogs with shared tags
 }
