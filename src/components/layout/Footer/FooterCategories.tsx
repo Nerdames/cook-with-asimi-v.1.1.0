@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import styles from './Footer.module.css'
 
 const FooterCategories: React.FC = () => {
@@ -6,9 +7,21 @@ const FooterCategories: React.FC = () => {
     <div className={styles.footer1Item}>
       <p className={styles.itemTopic}>Categories</p>
       <ul>
-        <li><a href="#">Car Shine Tips</a></li>
-        <li><a href="#">Car Wash Tips</a></li>
-        <li><a href="#">DIY Car Repair</a></li>
+        <li>
+          <Link href="/blogs/category/breakfast">Breakfast</Link>
+        </li>
+        <li>
+          <Link href="/blogs/category/lunch">Lunch</Link>
+        </li>
+        <li>
+          <Link href="/blogs/category/dinner">Dinner</Link>
+        </li>
+        <li>
+          <Link href="/blogs/category/desserts">Desserts</Link>
+        </li>
+        <li>
+          <Link href="/blogs/category/snacks">Snacks</Link>
+        </li>
       </ul>
     </div>
   )

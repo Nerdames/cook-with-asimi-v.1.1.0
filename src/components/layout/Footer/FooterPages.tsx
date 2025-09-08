@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import styles from './Footer.module.css'
 
 const FooterPages: React.FC = () => {
@@ -6,9 +7,15 @@ const FooterPages: React.FC = () => {
     <div className={styles.footer1Item}>
       <p className={styles.itemTopic}>Pages</p>
       <ul>
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">Disclaimer</a></li>
-        <li><a href="#">Privacy Policy</a></li>
+        <li>
+          <Link href="/about">About Us</Link>
+        </li>
+        <li>
+          <Link href="/disclaimer">Disclaimer</Link>
+        </li>
+        <li>
+          <Link href="/privacy">Privacy Policy</Link>
+        </li>
       </ul>
     </div>
   )
