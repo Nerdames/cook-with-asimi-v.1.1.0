@@ -19,8 +19,7 @@ const blogQuery = groq`
     body,
     video,
     thumbnail{ asset->{ url } },
-    tags,   // ✅ plain string array
-    // related = blogs that share tags with the current blog
+    tags,
     "related": *[
       _type == "blog" &&
       slug.current != ^.slug.current &&
@@ -33,26 +32,20 @@ const blogQuery = groq`
 `
 
 // ---- Metadata ----
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string }
-}): Promise<Metadata> {
-  const blog = await sanityClient.fetch(blogQuery, { slug: params.slug })
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const { slug } = params // ✅ destructure first
+  const blog = await sanityClient.fetch(blogQuery, { slug })
 
   return {
-    title: blog?.title ?? `Blog: ${params.slug}`,
+    title: blog?.title ?? `Blog: ${slug}`,
     description: blog?.description ?? 'Read this blog on Cook with Asimi',
   }
 }
 
 // ---- Page Component ----
-export default async function BlogPage({
-  params,
-}: {
-  params: { slug: string }
-}) {
-  const blog = await sanityClient.fetch(blogQuery, { slug: params.slug })
+export default async function BlogPage({ params }: { params: { slug: string } }) {
+  const { slug } = params // ✅ destructure before using
+  const blog = await sanityClient.fetch(blogQuery, { slug })
 
   if (!blog || !blog.title || !blog.slug || !blog.body) {
     notFound()
@@ -65,7 +58,7 @@ export default async function BlogPage({
       author={{ name: blog.author?.name || 'Unknown Author' }}
       category={{ title: blog.category?.title || 'Uncategorized' }}
       description={blog.description}
-      tags={blog.tags || []}   // ✅ no map needed
+      tags={blog.tags || []}
       thumbnail={blog.thumbnail}
       video={blog.video}
       body={blog.body}
