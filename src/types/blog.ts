@@ -1,5 +1,13 @@
 import type { PortableTextBlock } from "@portabletext/types"
 
+export interface RelatedBlog {
+  _id: string
+  title: string
+  slug: string
+  thumbnail?: string
+  date: string
+}
+
 export interface Blog {
   _id: string
   title: string
@@ -17,5 +25,5 @@ export interface Blog {
   author?: {
     name: string
   }
-  related?: Blog[] // ✅ blogs with shared tags
+  related?: RelatedBlog[] // ✅ lightweight type
 }

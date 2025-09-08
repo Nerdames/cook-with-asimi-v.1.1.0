@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { groq } from 'next-sanity'
@@ -10,19 +10,30 @@ import styles from './SearchBar.module.css'
 interface BlogPost {
   _id: string
   title: string
-  slug: { current: string }
+  slug?: string | null
   description?: string
   tags?: string[]
 }
 
+const RECENT_KEY = 'recent-searches'
+
 export default function SearchBar() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<BlogPost[]>([])
+  const [recentSearches, setRecentSearches] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
+  const [isFocused, setIsFocused] = useState(false)
 
   const router = useRouter()
 
+  // Load saved searches on mount
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]')
+    setRecentSearches(stored)
+  }, [])
+
+  // Run search when query changes
   useEffect(() => {
     if (!query.trim()) {
       setResults([])
@@ -41,36 +52,54 @@ export default function SearchBar() {
         )][0...5] {
           _id,
           title,
-          slug,
+          "slug": slug.current,
           description,
           tags
         }
       `
 
       sanityClient
-        .fetch(searchQuery, { q: `*${query}*` })
-        .then((data: BlogPost[]) => {
-          setResults(data)
+        .fetch<BlogPost[]>(searchQuery, { q: `*${query}*` })
+        .then((data) => {
+          setResults(data || [])
           setActiveIndex(-1)
-          setLoading(false)
         })
-        .catch(() => setLoading(false))
+        .catch(() => setResults([]))
+        .finally(() => setLoading(false))
     }, 400)
 
     return () => clearTimeout(delayDebounce)
   }, [query])
 
+  // Save a search term
+  const saveSearch = (term: string) => {
+    if (!term.trim()) return
+    const updated = [term, ...recentSearches.filter((q) => q !== term)].slice(0, 6)
+    setRecentSearches(updated)
+    localStorage.setItem(RECENT_KEY, JSON.stringify(updated))
+  }
+
+  const deleteSearch = (term: string) => {
+    const updated = recentSearches.filter((q) => q !== term)
+    setRecentSearches(updated)
+    localStorage.setItem(RECENT_KEY, JSON.stringify(updated))
+  }
+
+  const clearAllSearches = () => {
+    setRecentSearches([])
+    localStorage.removeItem(RECENT_KEY)
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (query.trim()) {
+      saveSearch(query.trim())
       router.push(`/search?q=${encodeURIComponent(query.trim())}`)
-      setQuery('')
-      setResults([])
-      setActiveIndex(-1)
+      resetSearch()
     }
   }
 
-  const handleResultClick = () => {
+  const resetSearch = () => {
     setQuery('')
     setResults([])
     setActiveIndex(-1)
@@ -81,30 +110,40 @@ export default function SearchBar() {
 
     if (e.key === 'ArrowDown') {
       e.preventDefault()
-      setActiveIndex(prev => (prev + 1) % results.length)
+      setActiveIndex((prev) => (prev + 1) % results.length)
     }
 
     if (e.key === 'ArrowUp') {
       e.preventDefault()
-      setActiveIndex(prev => (prev - 1 + results.length) % results.length)
+      setActiveIndex((prev) => (prev - 1 + results.length) % results.length)
     }
 
     if (e.key === 'Enter') {
       if (activeIndex >= 0 && results[activeIndex]) {
-        router.push(`/blogs/${results[activeIndex].slug.current}`)
-        handleResultClick()
+        const slug = results[activeIndex].slug
+        if (slug) {
+          router.push(`/blogs/${slug}`)
+          saveSearch(results[activeIndex].title)
+        }
+        resetSearch()
       } else {
         handleSubmit(e)
       }
     }
   }
 
-  const highlightMatch = (text: string) => {
-    const q = query.trim()
-    if (!q) return text
-    const regex = new RegExp(`(${q})`, 'gi')
-    return text.replace(regex, '<mark>$1</mark>')
-  }
+  const escapeRegex = (str: string) =>
+    str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+  const highlightMatch = useCallback(
+    (text: string) => {
+      const q = query.trim()
+      if (!q) return text
+      const regex = new RegExp(`(${escapeRegex(q)})`, 'gi')
+      return text.replace(regex, '<mark>$1</mark>')
+    },
+    [query]
+  )
 
   return (
     <form onSubmit={handleSubmit} className={styles.searchContainer} role="search">
@@ -113,9 +152,11 @@ export default function SearchBar() {
         className={styles.searchInput}
         placeholder="Search..."
         value={query}
-        onChange={e => setQuery(e.target.value)}
+        onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
-        required
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setTimeout(() => setIsFocused(false), 200)}
+        required={false}
         aria-autocomplete="list"
         aria-controls="search-results"
         aria-activedescendant={
@@ -126,39 +167,91 @@ export default function SearchBar() {
       />
 
       {query && (
-        <button type="submit" className={`${styles.goButton} ${styles.goVisible}`} title="Go">
-          <i className="bx bx-search"></i>
+        <button
+          type="submit"
+          className={`${styles.goButton} ${styles.goVisible}`}
+          title="Go"
+        >
+          <i className="bx bx-search" aria-hidden="true"></i>
         </button>
       )}
 
-      {(results.length > 0 || loading || (!loading && query && results.length === 0)) && (
-        <ul
-          className={`${styles.resultsList} ${styles.fadeIn}`}
-          id="search-results"
-          role="listbox"
-        >
+      {(isFocused && (results.length > 0 || loading || (!loading && query && results.length === 0) || (!query && recentSearches.length > 0))) && (
+        <ul className={`${styles.resultsList} ${styles.fadeIn}`} id="search-results" role="listbox">
+          {/* Recent searches */}
+          {!query &&
+            isFocused &&
+            recentSearches.map((term) => (
+              <li key={`recent-${term}`} className={styles.recentItem}>
+                <div
+                  className={styles.recentClick}
+                  onClick={() => {
+                    setQuery(term)
+                    router.push(`/search?q=${encodeURIComponent(term)}`)
+                    saveSearch(term)
+                    resetSearch()
+                  }}
+                >
+                  <i className="bx bx-history" aria-hidden="true"></i>
+                  {term}
+                </div>
+                <button
+                  type="button"
+                  className={styles.clearOne}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    deleteSearch(term)
+                  }}
+                  aria-label={`Remove ${term}`}
+                >
+                  <i className="bx bx-x"></i>
+                </button>
+              </li>
+            ))}
+
+          {/* Clear all */}
+          {!query && isFocused && recentSearches.length > 0 && (
+            <li
+              className={styles.clearAll}
+              onClick={clearAllSearches}
+            >
+              <i className="bx bx-trash" aria-hidden="true"></i>
+              Clear history
+            </li>
+          )}
+
           {loading && (
             <li className={styles.searchStatus} role="option">
               Searching...
             </li>
           )}
 
-          {!loading && results.length > 0 &&
-            results.map((post, index) => (
-              <li
-                key={post._id}
-                id={`search-item-${post._id}`}
-                role="option"
-                aria-selected={index === activeIndex}
-              >
-                <Link
-                  href={`/blogs/${post.slug.current}`}
-                  className={`${styles.resultLink} ${index === activeIndex ? styles.activeItem : ''}`}
-                  onClick={handleResultClick}
-                  dangerouslySetInnerHTML={{ __html: highlightMatch(post.title) }}
-                />
-              </li>
-            ))}
+          {!loading &&
+            results.length > 0 &&
+            results.map((post, index) => {
+              const slug = post.slug
+              if (!slug) return null
+              return (
+                <li
+                  key={post._id}
+                  id={`search-item-${post._id}`}
+                  role="option"
+                  aria-selected={index === activeIndex}
+                >
+                  <Link
+                    href={`/blogs/${slug}`}
+                    className={`${styles.resultLink} ${index === activeIndex ? styles.activeItem : ''}`}
+                    onClick={() => {
+                      saveSearch(post.title)
+                      resetSearch()
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: highlightMatch(post.title),
+                    }}
+                  />
+                </li>
+              )
+            })}
 
           {!loading && query && results.length === 0 && (
             <li className={styles.searchStatus} role="option">
