@@ -1,4 +1,3 @@
-// C:\Users\chibu\Desktop\Next\cook-with-asimi\types\blog.ts
 import type { PortableTextBlock } from "@portabletext/types"
 
 export interface Blog {
@@ -7,10 +6,7 @@ export interface Blog {
   slug: string
   description?: string
   body: PortableTextBlock[]
-  tags?: {
-    title: string
-    slug: string
-  }[]
+  tags?: string[]   // ✅ plain strings
   category?: {
     title: string
     slug: string

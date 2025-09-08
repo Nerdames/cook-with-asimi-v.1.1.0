@@ -17,8 +17,10 @@ interface FetchOptions {
 
 /**
  * Fetches content from Sanity CMS.
- * - Blogs: supports slug, search, category, tag, pagination, sorting
  * - About: returns the first (and usually only) entry
+ * - Blogs:
+ *    • slug → returns one blog + related blogs by shared tags
+ *    • list → supports search, category, tag, pagination, sorting
  */
 export async function getAllContent({
   type,
@@ -28,8 +30,11 @@ export async function getAllContent({
   tag,
   limit = 10,
   offset = 0,
-  sort = "date desc", // ✅ matches schema field
+  sort = "date desc",
 }: FetchOptions): Promise<{ data: (Blog | About)[]; total: number }> {
+  // --------------------
+  // About page
+  // --------------------
   if (type === "about") {
     const query = `*[_type == "about"][0] {
       _id,
@@ -41,12 +46,43 @@ export async function getAllContent({
     return { data: data ? [data] : [], total: data ? 1 : 0 }
   }
 
-  // Build blog filters
+  // --------------------
+  // Single blog by slug (with related blogs)
+  // --------------------
+  if (type === "blog" && slug) {
+    const query = `*[_type == "blog" && slug.current == $slug][0] {
+      _id,
+      title,
+      "slug": slug.current,
+      description,
+      body,
+      tags, // ✅ plain string array in schema
+      "category": category->{ title, "slug": slug.current },
+      "author": author->{ name },
+      "thumbnail": thumbnail.asset->url,
+      video,
+      date,
+      // Related blogs: share at least 1 tag, exclude self
+      "related": *[_type == "blog" && slug.current != $slug && count(tags[@ in ^.tags]) > 0][0...4] {
+        _id,
+        title,
+        "slug": slug.current,
+        "thumbnail": thumbnail.asset->url,
+        date
+      }
+    }`
+
+    const blog = await sanityClient.fetch<Blog | null>(query, { slug })
+    return { data: blog ? [blog] : [], total: blog ? 1 : 0 }
+  }
+
+  // --------------------
+  // Blog list (with filters, pagination, sorting)
+  // --------------------
   let filter = `_type == "blog"`
 
-  if (slug) filter += ` && slug.current == $slug`
   if (category) filter += ` && category->slug.current == $category`
-  if (tag) filter += ` && $tag in tags`   // ✅ tags are strings in schema
+  if (tag) filter += ` && $tag in tags` // ✅ works if tags are plain strings
   if (search) {
     filter += ` && (title match $search || description match $search)`
   }
@@ -58,7 +94,7 @@ export async function getAllContent({
       "slug": slug.current,
       description,
       body,
-      tags,  // ✅ plain string array
+      tags,
       "category": category->{ title, "slug": slug.current },
       "author": author->{ name },
       "thumbnail": thumbnail.asset->url,
